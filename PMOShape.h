@@ -15,8 +15,9 @@ namespace ProbeMovementOptimizer
 		enum class EType
 		{
 			_Unknown = Unknown,
-			Manifolds,
+			Boundaries,
 			Simplices,
+			Facets,
 			_Size
 		};
 
@@ -35,6 +36,7 @@ namespace ProbeMovementOptimizer
 				_Unknown = Unknown,
 				Union,
 				Exclustion,
+				Intersection,
 				_Size
 			};
 
@@ -48,7 +50,11 @@ namespace ProbeMovementOptimizer
 			TSequence<FBoundary> Boundaries;
 			struct
 			{
-				TSequence<FSimplex> Indices;
+				union
+				{
+					TSequence<FSimplex> Simplices;
+					TSequence<FFacet> Facets;
+				};
 				TSequence<FPoint> Points;
 			};
 			FPointer Pointer;

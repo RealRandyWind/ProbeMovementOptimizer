@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="PMOAlgorithm.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PMOGenerator.h" />
     <ClInclude Include="PMOMovement.h" />
     <ClInclude Include="PMOMovement2D.h" />
     <ClInclude Include="PMOShape.h" />
@@ -186,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="PMOMovement2D.cpp" />
     <ClCompile Include="ProbeMovementOptimizer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

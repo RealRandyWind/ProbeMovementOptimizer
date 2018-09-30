@@ -17,7 +17,7 @@ FVoid FMovement2D::UseDefaultParameters()
 
 FVoid FMovement2D::_Use(const FShape &Shape, typename FPath &Path)
 {
-	if (Shape.Type != FShape::EType::Manifolds) { return; }
+	if (Shape.Type != FShape::EType::Boundaries) { return; }
 
 	for (const auto &Boundary : Shape.Boundaries)
 	{
