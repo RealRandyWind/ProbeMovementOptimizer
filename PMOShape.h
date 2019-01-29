@@ -3,6 +3,7 @@
 #include "NDevTypes.h"
 #include "NDevPoint.h"
 #include "NDevSequence.h"
+#include "NDevMathExtend.h"
 
 namespace ProbeMovementOptimizer
 {
@@ -25,47 +26,68 @@ namespace ProbeMovementOptimizer
 
 		using FPath = TSequence<FPoint>;
 
-		using FSimplex = TPoint<SizePoint + 1, FSize>;
-
 		using FFacet = TPoint<SizePoint, FSize>;
+
+		using FSimplex = TPoint<SizePoint + 1, FSize>;
 
 		struct FBoundary
 		{
 			enum class EOperation
 			{
 				_Unknown = Unknown,
-				Union,
-				Exclustion,
+				Inclusion,
+				Exclusion,
 				Intersection,
 				_Size
 			};
 
 			EOperation Operation;
-			TSequence<FPoint> Points;
+			TSequence<FSize> Indices;
 		};
 
 		EType Type;
 		union
 		{
 			TSequence<FBoundary> Boundaries;
-			struct
-			{
-				union
-				{
-					TSequence<FSimplex> Simplices;
-					TSequence<FFacet> Facets;
-				};
-				TSequence<FPoint> Points;
-			};
-			FPointer Pointer;
+			TSequence<FSimplex> Simplices;
+			TSequence<FFacet> Facets;
 		};
+		TSequence<FPoint> Points;
 
 		TShape()
 		{
-			Pointer = NullPtr;
+			Type = EType::_Unknown;
 		}
 
 		~TShape() { }
+
+		virtual FVoid Bounds(FPoint &Lower, FPoint &Upper, FBoolean bInitialize = True)
+		{
+			if (bInitialize)
+			{
+				Lower = TLimit<FReal>::Infinity();
+				Upper = -TLimit<FReal>::Infinity();
+			}
+
+			for (auto &Point : Points)
+			{
+				MinInto(Lower, Point);
+				MaxInto(Upper, Point);
+			}
+		};
+
+		virtual FVoid Mean(FPoint &Center, FBoolean bInitialize = True, FSize K = 0)
+		{
+			if (bInitialize) { Center = 0; }
+			else { Center *= (1.0 / K); }
+
+			for (auto &Point : Points)
+			{
+				Center += Point;
+			}
+			Center *= (1.0 / (K + Points.Size()))
+		};
+
 
 	};
 
@@ -76,4 +98,7 @@ namespace ProbeMovementOptimizer
 	using FShape4D = TShape<4>;
 
 	using FShape5D = TShape<5>;
+
+
+
 }

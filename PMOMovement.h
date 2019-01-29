@@ -19,13 +19,13 @@ namespace ProbeMovementOptimizer
 
 		struct FParameters
 		{
-			typename FShape::FPoint Start;
+			typename FShape::FPoint Start, End;
 			FReal Radius, Alpha, Beta;
 		};
 
 		struct FState
 		{
-			TSequence<FSize> ExclusionIndices;
+			TSequence<typename FShape::FPoint> Probe;
 		};
 
 		FParameters Parameters;

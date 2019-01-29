@@ -15,6 +15,7 @@ namespace ProbeMovementOptimizer
 	{
 		using FShape = TShape<SizePoint>;
 		TNormal<FReal> Distribution;
+		Distribution.Seed(Seed);
 
 	}
 
@@ -27,4 +28,5 @@ namespace ProbeMovementOptimizer
 			Generate(Item, K, Seed);
 		}
 	}
+
 }

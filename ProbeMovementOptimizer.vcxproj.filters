@@ -30,6 +30,12 @@
     <ClInclude Include="PMOMovement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProbeMovementOptimizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PMOKDTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

@@ -13,7 +13,7 @@ namespace ProbeMovementOptimizer
 	using namespace NDev::Types;
 
 	template<typename TypeInput, typename TypeResult>
-	struct TAlgorithm : public CResource
+	struct TAlgorithm : public FResource
 	{
 		using FInput = TypeInput;
 		

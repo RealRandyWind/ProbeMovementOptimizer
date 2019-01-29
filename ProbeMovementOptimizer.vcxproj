@@ -173,9 +173,11 @@
   <ItemGroup>
     <ClInclude Include="PMOAlgorithm.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PMOKDTree.h" />
     <ClInclude Include="PMOMovement.h" />
     <ClInclude Include="PMOMovement2D.h" />
     <ClInclude Include="PMOShape.h" />
+    <ClInclude Include="ProbeMovementOptimizer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
