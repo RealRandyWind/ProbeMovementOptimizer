@@ -28,7 +28,17 @@ FVoid FMovement2D::_Use(const FShape &Shape, FPath &Path)
 
 FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 {
+	TList<FPath::FValue> List;
+	FShape::FPoint Upper, Lower;
+	FSize Size;
 
+	Shape.Bounds(Upper, Lower);
+	Size = Prod(Lower - Upper, Parameters.Radius);
+	List.Reserve(Size);
+
+
+
+	Path.Data(List.Descriptor());
 }
 
 FVoid FMovement2D::_Optimize(FPath &Path)

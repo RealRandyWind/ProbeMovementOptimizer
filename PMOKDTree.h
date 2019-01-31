@@ -18,31 +18,44 @@ namespace ProbeMovementOptimizer
 	{
 		using FPoint = typename TPoint<SizePoint, FReal>;
 
-		struct FNode
+		struct _FNode
 		{
 			FPoint Position;
+			_FNode *Parent;
 			union
 			{
-				TReferences<2, FNode> Children;
-				struct { FNode *Left, *Right; };
+				TReferences<2, _FNode> Children;
+				struct { _FNode *Left, *Right; };
 			};
 		};
 		
 		struct _FEvent
 		{
 			FSize From, To, Depth, Index;
+			_FNode *Parent;
 		};
 
-		TSequence<FNode> _Nodes;
+		TSequence<_FNode> _Nodes;
 		TSequence<FPoint> _Points;
+
+		TKDTree()
+		{
+			
+		}
 
 		TKDTree(TSequence<FPoint> &Points)
 		{
-			_Points.Data(Points.Descriptor());
-			_Nodes.Reserve(Points.Size(), True);
+			Rebuilt(Points);
 		}
 
 		~TKDTree() { }
+
+		FVoid Rebuilt(TSequence<FPoint> &Points)
+		{
+			_Points.Data(Points.Descriptor());
+			_Nodes.Reserve(Points.Size(), True);
+			Rebuilt();
+		}
 
 		virtual FVoid Rebuilt()
 		{
@@ -54,7 +67,7 @@ namespace ProbeMovementOptimizer
 			if (_Points.Empty()) { return;  }
 
 			Index = 0;
-			Stack.Push(_FEvent{ 0, _Points.Size() - 1, 0, Index });
+			Stack.Push(_FEvent{ 0, _Points.Size() - 1, 0, Index, NullPtr });
 			while (Stack.Full())
 			{
 				Event = Stack.Pop();
@@ -68,29 +81,51 @@ namespace ProbeMovementOptimizer
 				auto &Node = _Nodes[Event.Index];
 				Node.Position = List[Median];
 				Node.Left = Node.Right = NullPtr;
+				Node.Parent = Event.Parent;
 
 				if (Event.From < Median)
 				{
 					_Index = ++Index;
-					Stack.Push(_FEvent{ Event.From, Median, Event.Depth + 1, _Index });
+					Stack.Push(_FEvent{ Event.From, Median, Event.Depth + 1, _Index, &Node });
 					Node.Left = &_Nodes[_Index];
 				}
 				if (Median + 1 < Event.To)
 				{
 					_Index = ++Index;
-					Stack.Push(_FEvent{ Median + 1, Event.To, Event.Depth + 1, _Index });
+					Stack.Push(_FEvent{ Median + 1, Event.To, Event.Depth + 1, _Index, &Node });
 					Node.Right = &_Nodes[_Index];
 				}
 			}
 		}
 
-		virtual FVoid Nearest(const FPoint& Point, FSize &Index) const;
+		virtual FVoid Nearest(const FPoint& Point, FPoint &Value) const
+		{
+			if (_Points.Empty()) { return;  }
+			auto &Root = _Nodes[0];
 
-		virtual FVoid Nearest(const FPoint& Point, TSequence<FSize> &Indices, FSize) const;
 
-		virtual FVoid Nearest(const FPoint& Point, FReal Radius, FSize &Index) const;
+		}
 
-		virtual FVoid Nearest(const FPoint& Point, FReal Radius, TSequence<FSize> &Indices, FSize = TLimit<FSize>::Infinity) const;
+		virtual FVoid Nearest(const FPoint& Point, TSequence<FPoint> &Values, FSize Size) const
+		{
+			Values.Reserve(Size);
+			if (_Points.Empty()) { return; }
+			auto &Root = _Nodes[0];
+			
+		}
+
+		virtual FVoid Nearest(const FPoint& Point, FReal Radius, FPoint &Value) const
+		{
+			if (_Points.Empty()) { return; }
+			auto &Root = _Nodes[0];
+		}
+
+		virtual FVoid Nearest(const FPoint& Point, FReal Radius, TSequence<FPoint> &Values, FSize Size = TLimit<FSize>::Infinity) const
+		{
+			Values.Reserve(Size);
+			if (_Points.Empty()) { return; }
+			auto &Root = _Nodes[0];
+		}
 
 
 	};

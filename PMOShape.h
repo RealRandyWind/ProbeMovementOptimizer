@@ -61,7 +61,7 @@ namespace ProbeMovementOptimizer
 
 		~TShape() { }
 
-		virtual FVoid Bounds(FPoint &Lower, FPoint &Upper, FBoolean bInitialize = True)
+		virtual FVoid Bounds(FPoint &Lower, FPoint &Upper, FBoolean bInitialize = True) const
 		{
 			if (bInitialize)
 			{
@@ -76,7 +76,7 @@ namespace ProbeMovementOptimizer
 			}
 		};
 
-		virtual FVoid Mean(FPoint &Center, FBoolean bInitialize = True, FSize K = 0)
+		virtual FVoid Mean(FPoint &Center, FBoolean bInitialize = True, FSize K = 0) const
 		{
 			if (bInitialize) { Center = 0; }
 			else { Center *= (1.0 / K); }
@@ -85,7 +85,7 @@ namespace ProbeMovementOptimizer
 			{
 				Center += Point;
 			}
-			Center *= (1.0 / (K + Points.Size()))
+			Center *= (1.0 / (K + Points.Size()));
 		};
 
 
