@@ -20,8 +20,9 @@ namespace ProbeMovementOptimizer
 
 		FVoid _Optimize(FPath &);
 
-		FVoid _Place(FShape::FPoint &);
+		FVoid _Place(FShape::FPoint &, FShape::FPoint &, const FShape::FBoundary &, const FShape &, const FShape::FPath &, FSize &);
 
+		FVoid _InBound(FShape::FPoint &, FShape::FPoint &, FShape::FPoint &, const FShape::FPoint &, const FShape::FPoint &, FBoolean &);
 
 	};
 

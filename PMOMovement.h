@@ -11,6 +11,7 @@ namespace ProbeMovementOptimizer
 	template<FSize SizePoint>
 	struct TMovement : public TAlgorithm<TShape<SizePoint>, typename TShape<SizePoint>::FPath>
 	{
+
 		using FAlgorithm = TAlgorithm<TShape<SizePoint>, typename TShape<SizePoint>::FPath>;
 
 		using FShape = typename FAlgorithm::FInput;

@@ -29,15 +29,21 @@ FVoid FMovement2D::_Use(const FShape &Shape, FPath &Path)
 FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 {
 	TList<FPath::FValue> List;
-	FShape::FPoint Upper, Lower;
-	FSize Size;
+	FShape::FPoint Cursor, Next;
+	FSize Index, End;
 
-	Shape.Bounds(Upper, Lower);
-	Size = Prod(Lower - Upper, Parameters.Radius);
-	List.Reserve(Size);
-
-
-
+	for (const auto &Boundary : Shape.Boundaries)
+	{
+		Index = 0;
+		End = Boundary.Indices.Size();
+		Cursor = Shape.Points[Boundary.Indices[Index]];
+		while (Index < End)
+		{
+			_Place(Cursor, Next, Boundary, Shape, Path, Index);
+			List.Add(Cursor + Parameters.Radius);
+			Cursor = Next;
+		}
+	}
 	Path.Data(List.Descriptor());
 }
 
@@ -59,7 +65,39 @@ FVoid FMovement2D::_Optimize(FPath &Path)
 	Lenght += Norm(Parameters.End - From);
 }
 
-FVoid FMovement2D::_Place(FShape::FPoint &Point)
+FVoid FMovement2D::_Place(FShape::FPoint &Cursor, FShape::FPoint &Next, const FShape::FBoundary &Boundary, const FShape &Shape, const FShape::FPath &Path, FSize &Index)
 {
+	FShape::FPoint Lower, Upper;
+	FBoolean bInBound;
 
+	Upper = Lower = Cursor;
+	bInBound = True;
+	/* compute uper and lower until bounds excede movement freedom with respect to
+	 * corner
+	 */
+	while (bInBound)
+	{
+		/* best may be to use nearest as next, but each neighbor needs stored information of 
+		 * its adjacent edges and direction, but for now its ok to assume a more simple shape
+		 * that the next point and previous are always adjacent, nearest and including.
+		 */
+		const auto &Point = Shape.Points[Boundary.Indices[Index]];
+		_InBound(Lower, Upper, Next, Point, Cursor, bInBound);
+		/* check if probe can be moved such that containing all previous points
+		 */
+		++Index;
+	}
+	/* Set intersection probe with  index - 1 to index as Next, need edge enter and
+	 * leave information.
+	 */
+}
+
+FVoid FMovement2D::_InBound(FShape::FPoint &Lower, FShape::FPoint &Upper, FShape::FPoint &Next, const FShape::FPoint &Point, const FShape::FPoint &Cursor, FBoolean &InBound)
+{
+	FShape::FPoint Difference;
+
+	AbsInto(Difference, Lower - Upper);
+
+	MinInto(Lower, Point);
+	MaxInto(Upper, Point);
 }

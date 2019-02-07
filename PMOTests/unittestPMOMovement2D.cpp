@@ -22,7 +22,17 @@ namespace PMOTests
 			// TODO: Your test code here
 		}
 
+		TEST_METHOD(TestSquareHole)
+		{
+			// TODO: Your test code here
+		}
+
 		TEST_METHOD(TestCircle)
+		{
+			// TODO: Your test code here
+		}
+
+		TEST_METHOD(TestCircleHole)
 		{
 			// TODO: Your test code here
 		}
@@ -32,7 +42,12 @@ namespace PMOTests
 			// TODO: Your test code here
 		}
 
-		TEST_METHOD(TestHoles)
+		TEST_METHOD(TestArchHole)
+		{
+			// TODO: Your test code here
+		}
+
+		TEST_METHOD(TestA)
 		{
 			// TODO: Your test code here
 		}
