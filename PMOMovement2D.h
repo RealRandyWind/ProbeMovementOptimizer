@@ -20,7 +20,9 @@ namespace ProbeMovementOptimizer
 
 		FVoid _Optimize(FPath &);
 
-		FVoid _Touch(FShape::FPoint &, FPath &);
+		FVoid _Place(FShape::FPoint &);
+
+
 	};
 
 

@@ -3,7 +3,6 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-#include <random>
 #include "NDev.h"
 #include "PMOShape.h"
 #include "PMOAlgorithm.h"

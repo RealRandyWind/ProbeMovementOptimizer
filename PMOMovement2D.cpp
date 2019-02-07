@@ -59,7 +59,7 @@ FVoid FMovement2D::_Optimize(FPath &Path)
 	Lenght += Norm(Parameters.End - From);
 }
 
-FVoid FMovement2D::_Touch(FShape::FPoint &, FPath &)
+FVoid FMovement2D::_Place(FShape::FPoint &Point)
 {
 
 }
