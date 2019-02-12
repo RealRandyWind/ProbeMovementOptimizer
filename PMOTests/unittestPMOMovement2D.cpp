@@ -47,10 +47,24 @@ namespace PMOTests
 			// TODO: Your test code here
 		}
 
+		TEST_METHOD(TestStribes)
+		{
+			// TODO: Your test code here
+		}
+
+		TEST_METHOD(TestStribesHole)
+		{
+			// TODO: Your test code here
+		}
+
 		TEST_METHOD(TestA)
 		{
 			// TODO: Your test code here
 		}
 
+
 	};
+
+
+
 }

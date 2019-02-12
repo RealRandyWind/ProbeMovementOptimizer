@@ -14,6 +14,11 @@ namespace ProbeMovementOptimizer
 
 	protected:
 
+		struct _FSample
+		{
+			FShape::FPoint &Center, Lower, Upper;
+		};
+
 		virtual FVoid _Use(const FShape &, FPath &) override;
 
 		FVoid _Coverage(const FShape &, FPath &);

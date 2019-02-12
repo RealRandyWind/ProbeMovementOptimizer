@@ -39,6 +39,9 @@ FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 		Cursor = Shape.Points[Boundary.Indices[Index]];
 		while (Index < End)
 		{
+			/* check if cursor is inside existing sample, if yes we should
+			 * continue with this sample
+			 */
 			_Place(Cursor, Next, Boundary, Shape, Path, Index);
 			List.Add(Cursor + Parameters.Radius);
 			Cursor = Next;
@@ -87,17 +90,14 @@ FVoid FMovement2D::_Place(FShape::FPoint &Cursor, FShape::FPoint &Next, const FS
 		 */
 		++Index;
 	}
-	/* Set intersection probe with  index - 1 to index as Next, need edge enter and
+	/* set intersection probe with  index - 1 to index as Next, need edge enter and
 	 * leave information.
+	 * 
+	 * next placement should always be prioritized in clocwise order.
 	 */
 }
 
 FVoid FMovement2D::_InBound(FShape::FPoint &Lower, FShape::FPoint &Upper, FShape::FPoint &Next, const FShape::FPoint &Point, const FShape::FPoint &Cursor, FBoolean &InBound)
 {
-	FShape::FPoint Difference;
-
-	AbsInto(Difference, Lower - Upper);
-
-	MinInto(Lower, Point);
-	MaxInto(Upper, Point);
+	
 }
