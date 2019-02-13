@@ -14,9 +14,16 @@ namespace ProbeMovementOptimizer
 
 	protected:
 
+		/* sample is our event opject, Lower/Upper show the constrain of movement,
+		 * Ankers the out edge limitations both points are alwasy on the edge of the
+		 * sample, movment of the sample may changes the Ankers.
+		 *
+		 * idee is to move the next sample ankerd on containing A and B.
+		 */
 		struct _FSample
 		{
-			FShape::FPoint &Center, Lower, Upper;
+			FShape::FPoint &Center, Ankers[2];
+			FSize Index;
 		};
 
 		virtual FVoid _Use(const FShape &, FPath &) override;
@@ -25,9 +32,10 @@ namespace ProbeMovementOptimizer
 
 		FVoid _Optimize(FPath &);
 
-		FVoid _Place(FShape::FPoint &, FShape::FPoint &, const FShape::FBoundary &, const FShape &, const FShape::FPath &, FSize &);
+		FVoid _Place(_FSample &, const FShape &, TStack<_FSample> &);
 
-		FVoid _InBound(FShape::FPoint &, FShape::FPoint &, FShape::FPoint &, const FShape::FPoint &, const FShape::FPoint &, FBoolean &);
+		FBoolean _Intersection(const FShape::FPoint &, const FShape::FPoint &, const FShape::FPoint (&)[2], FShape::FPoint &);
+
 
 	};
 

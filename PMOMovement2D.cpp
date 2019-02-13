@@ -11,7 +11,7 @@ FVoid FMovement2D::UseDefaultParameters()
 {
 	Parameters.Start = 0.0;
 	Parameters.End = 0.0;
-	Parameters.Radius = 1.0;
+	Parameters.Diameter = 1.0;
 	Parameters.Alpha = 0.01;
 	Parameters.Beta = TLimit<FReal>::Infinity();
 }
@@ -29,23 +29,13 @@ FVoid FMovement2D::_Use(const FShape &Shape, FPath &Path)
 FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 {
 	TList<FPath::FValue> List;
-	FShape::FPoint Cursor, Next;
-	FSize Index, End;
+	TStack<_FSample> Stack;
 
-	for (const auto &Boundary : Shape.Boundaries)
+	Stack.Push(_FSample{ List[Stack.Size()], });
+	while (Stack.Full())
 	{
-		Index = 0;
-		End = Boundary.Indices.Size();
-		Cursor = Shape.Points[Boundary.Indices[Index]];
-		while (Index < End)
-		{
-			/* check if cursor is inside existing sample, if yes we should
-			 * continue with this sample
-			 */
-			_Place(Cursor, Next, Boundary, Shape, Path, Index);
-			List.Add(Cursor + Parameters.Radius);
-			Cursor = Next;
-		}
+		auto Sample = Stack.Pop();
+		_Place(Sample, Shape, Stack);
 	}
 	Path.Data(List.Descriptor());
 }
@@ -68,36 +58,46 @@ FVoid FMovement2D::_Optimize(FPath &Path)
 	Lenght += Norm(Parameters.End - From);
 }
 
-FVoid FMovement2D::_Place(FShape::FPoint &Cursor, FShape::FPoint &Next, const FShape::FBoundary &Boundary, const FShape &Shape, const FShape::FPath &Path, FSize &Index)
+FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TStack<_FSample> &Stack)
 {
-	FShape::FPoint Lower, Upper;
+	FShape::FPoint Probe[2];
+	FShape::FPoint Lower, Upper, Cursor, Previous, Point;
+	FReal Radius;
+	FSize Index;
 	FBoolean bInBound;
 
-	Upper = Lower = Cursor;
-	bInBound = True;
-	/* compute uper and lower until bounds excede movement freedom with respect to
-	 * corner
-	 */
-	while (bInBound)
-	{
-		/* best may be to use nearest as next, but each neighbor needs stored information of 
-		 * its adjacent edges and direction, but for now its ok to assume a more simple shape
-		 * that the next point and previous are always adjacent, nearest and including.
-		 */
-		const auto &Point = Shape.Points[Boundary.Indices[Index]];
-		_InBound(Lower, Upper, Next, Point, Cursor, bInBound);
-		/* check if probe can be moved such that containing all previous points
-		 */
-		++Index;
-	}
-	/* set intersection probe with  index - 1 to index as Next, need edge enter and
-	 * leave information.
+	bInBound = False;
+	Radius = Parameters.Diameter * 0.5;
+	Probe[0] = Sample.Center - Radius;
+	Probe[1] = Sample.Center + Radius;
+
+	/* find intersections (cliping with probe as cip plane) and find inbound points to
+	 * determine lower and upper bounds, trace ancker points remember clockwize priority
+	 * for sampling by pusing on the stack.
 	 * 
-	 * next placement should always be prioritized in clocwise order.
+	 * later optimize neast intersections lookup
 	 */
+	for (const auto &Boundary : Shape.Boundaries)
+	{
+		Previous = Shape.Points[Boundary.Indices.Size()];
+		for (const auto &Index : Boundary.Indices)
+		{
+			Cursor = Shape.Points[Index];
+			if (bInBound = InBound(Cursor, Probe))
+			{
+				MinInto(Lower, Cursor);
+				MaxInto(Upper, Cursor);
+			}
+			if (_Intersection(Previous, Cursor, Probe, Point))
+			{
+				
+			}
+			Previous = Cursor;
+		}
+	}
 }
 
-FVoid FMovement2D::_InBound(FShape::FPoint &Lower, FShape::FPoint &Upper, FShape::FPoint &Next, const FShape::FPoint &Point, const FShape::FPoint &Cursor, FBoolean &InBound)
+FBoolean FMovement2D::_Intersection(const FShape::FPoint &Previous, const FShape::FPoint &Cursor, const FShape::FPoint (&Probe)[2], FShape::FPoint &Point)
 {
-	
+	return False;
 }

@@ -21,7 +21,7 @@ namespace ProbeMovementOptimizer
 		struct FParameters
 		{
 			typename FShape::FPoint Start, End;
-			FReal Radius, Alpha, Beta;
+			FReal Diameter, Alpha, Beta;
 		};
 
 		struct FState

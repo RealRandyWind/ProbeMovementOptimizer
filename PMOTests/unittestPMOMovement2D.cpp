@@ -22,17 +22,27 @@ namespace PMOTests
 			// TODO: Your test code here
 		}
 
-		TEST_METHOD(TestSquareHole)
+		TEST_METHOD(TestSquareInverted)
 		{
 			// TODO: Your test code here
 		}
 
-		TEST_METHOD(TestCircle)
+		TEST_METHOD(TestSpiral)
 		{
 			// TODO: Your test code here
 		}
 
-		TEST_METHOD(TestCircleHole)
+		TEST_METHOD(TestSpiralInverted)
+		{
+			// TODO: Your test code here
+		}
+
+		TEST_METHOD(TestArray)
+		{
+			// TODO: Your test code here
+		}
+
+		TEST_METHOD(TestArrayInverted)
 		{
 			// TODO: Your test code here
 		}
@@ -42,22 +52,7 @@ namespace PMOTests
 			// TODO: Your test code here
 		}
 
-		TEST_METHOD(TestArchHole)
-		{
-			// TODO: Your test code here
-		}
-
-		TEST_METHOD(TestStribes)
-		{
-			// TODO: Your test code here
-		}
-
-		TEST_METHOD(TestStribesHole)
-		{
-			// TODO: Your test code here
-		}
-
-		TEST_METHOD(TestA)
+		TEST_METHOD(TestArchInverted)
 		{
 			// TODO: Your test code here
 		}
