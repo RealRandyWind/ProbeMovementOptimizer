@@ -6,6 +6,8 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 #include "NDev.h"
 #include "PMOShape.h"
 #include "PMOAlgorithm.h"
+#include "PMOMovement2D.h"
+#include "ProbeMovementOptimizer.h"
 
 namespace PMOTests
 {
@@ -17,6 +19,16 @@ namespace PMOTests
 	{
 	public:
 		
+		TEST_METHOD(TestBase)
+		{
+			TData<FShape2D> Shapes;
+			TData<FShape2D::FPath> Paths;
+
+			auto Movement2D = FMovement2D();
+			Movement2D.Initialize();
+			Movement2D.Use(Shapes, Paths);
+		}
+
 		TEST_METHOD(TestSquare)
 		{
 			// TODO: Your test code here

@@ -22,9 +22,12 @@ namespace ProbeMovementOptimizer
 		 */
 		struct _FSample
 		{
-			FShape::FPoint &Center, Ankers[2];
-			FSize Index;
+			FSize Index, Edge;
+			FShape::FPoint Lower, Upper;
+			FBoolean bIntersect;
 		};
+
+		virtual FVoid _Initialize() override;
 
 		virtual FVoid _Use(const FShape &, FPath &) override;
 
@@ -32,9 +35,9 @@ namespace ProbeMovementOptimizer
 
 		FVoid _Optimize(FPath &);
 
-		FVoid _Place(_FSample &, const FShape &, TStack<_FSample> &);
+		FVoid _Place(_FSample &, const FShape &, TList<FPath::FValue> &, TStack<_FSample> &);
 
-		FBoolean _Intersection(const FShape::FPoint &, const FShape::FPoint &, const FShape::FPoint (&)[2], FShape::FPoint &);
+		FVoid _Intersections(const FShape::FPoint &, const FShape::FPoint &, const FShape::FPoint &, _FSample (&)[4]);
 
 
 	};
