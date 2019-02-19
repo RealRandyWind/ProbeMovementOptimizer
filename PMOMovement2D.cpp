@@ -26,7 +26,7 @@ FVoid FMovement2D::_Initialize()
 
 FVoid FMovement2D::_Use(const FShape &Shape, FPath &Path)
 {
-	if (Shape.Type != FShape::EType::Boundaries) { return; }
+	if (Shape.Boundaries.Empty()) { return; }
 
 	_Coverage(Shape, Path);
 	_Optimize(Path);
@@ -41,7 +41,7 @@ FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 
 	const auto &Point = Shape.Points[0];
 	Stack.Push(_FSample{ List.Make(Point), 0, Point - Parameters.Diameter, Point + Parameters.Diameter, False });
-	while (Stack.Full())
+	while (!Stack.Empty())
 	{
 		auto Sample = Stack.Pop();
 		_Place(Sample, Shape, List, Stack);
@@ -51,13 +51,11 @@ FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 
 FVoid FMovement2D::_Optimize(FPath &Path)
 {
-	FSize End, Index;
 	FShape::FPoint From, To;
-	FReal Lenght, DLenght, Error;
+	FReal Lenght, DLenght;
 
 	From = Parameters.Start;
 	Lenght = DLenght = 0;
-	End = Path.Size();
 	for (const auto &Point : Path)
 	{
 		Lenght += Norm(To - From);
@@ -74,7 +72,7 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 	FReal Radius;
 	FSize Index, End;
 	FBoolean bPrevious, bCursor, bContained;
-
+	
 	auto &Center = List[Sample.Index];
 
 	bPrevious = True;
@@ -100,14 +98,12 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 	 */
 	for (const auto &Boundary : Shape.Boundaries)
 	{
-		Previous = Shape.Points[Boundary.Indices.Size()];
+		Previous = Shape.Points[Boundary.Indices.Size() - 1];
 		for (const auto &Index : Boundary.Indices)
 		{
 			Cursor = Shape.Points[Index];
 			if (bCursor = InBound(Cursor, State.Probe[1], State.Probe[3], False))
 			{
-				/* compute inner sample limitations, to later optimize placement
-				 */
 				MinInto(Lower, Cursor);
 				MaxInto(Upper, Cursor);
 			}
@@ -117,8 +113,6 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 			 */
 			if (!bContained)
 			{
-				/* compute anker points of new samples, these determine the limitations
-				 */
 				_Intersections(Previous, Cursor, Center, Samples);
 			}
 			bPrevious = bCursor;
@@ -142,41 +136,41 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 	}
 }
 
-FVoid FMovement2D::_Intersections(const FShape::FPoint &Previous, const FShape::FPoint &Cursor, const FShape::FPoint &Center, _FSample (&Samples)[4])
+FVoid FMovement2D::_Intersections(const FShape::FPoint &P3, const FShape::FPoint &P4, const FShape::FPoint &Center, _FSample (&Samples)[4])
 {
 	const FReal Eps = TLimit<FReal>::Epsilon();
 	FSize Index, End, Pivot;
 	FBoolean bIntersect;
-	FShape::FPoint Point, D34, D13, D12, D21;
-	FReal Alpha, Beta, Gamma, Eps;
+	FShape::FPoint Point, D34, D13, D12, D21, C;
+	FReal Alpha;
 
-	D34 = Previous - Cursor;
-	Pivot = End = 4;
+	D34 = P3 - P4;
+	End = 4;
+	Pivot = End - 1;
 	for (Index = 0; Index < End; ++Index)
 	{
 		auto &Sample = Samples[Index];
-		const auto &From = State.Probe[Pivot];
-		const auto &To = State.Probe[Index];
+		const auto &P1 = State.Probe[Pivot] + Center;
+		const auto &P2 = State.Probe[Index] + Center;
 
-		D13 = From - Previous;
-		D12 = From - To;
-		D21 = To - From;
+		D13 = P1 - P3;
+		D12 = P1 - P2;
+		D21 = P2 - P1;
 
-		Gamma = D12[0] * D34[1] - D12[1] * D34[0];
-
-		if (IsZeroEps(Gamma, Eps))
+		// Alpha = Det(D12 D34)
+		Alpha = D12[0] * D34[1] - D12[1] * D34[0];
+		if (IsZeroEps(Alpha, Eps))
 		{
-			// paralel lines TODO two cases
+			// paralel lines TODO two cases, on paralel non overlap return
+			// on overlap
 		}
+		// C = { Det(D13 D34), Det(D12 D13) } * (1.0 / Alpha)
+		C[0] = (D13[0] * D34[1] - D13[1] * D34[0]) * (1.0 / Alpha);
+		C[1] = -(D12[0] * D13[1] - D12[1] * D13[0]) * (1.0 / Alpha);
 
-		Alpha = (D13[0] * D34[1] - D13[1] * D34[0]) * (1.0 / Gamma);
-		Beta = -(D12[0] * D13[1] - D12[1] * D13[0]) * (1.0 / Gamma);
+		Point = P1 + C * D21;
 
-		Point[0] = From[0] + Alpha * D21[0];
-		Point[1] = From[1] + Beta * D21[1];
-		
-		bIntersect = 0.0 <= Alpha && Alpha <= 1.0 && 0.0 <= Beta && Beta <= 1.0;
-
+		bIntersect = All(Between(C, 0.0, 1.0));
 		if (bIntersect)
 		{
 			Sample.bIntersect = True;

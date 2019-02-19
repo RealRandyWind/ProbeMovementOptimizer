@@ -48,9 +48,7 @@ namespace ProbeMovementOptimizer
 	{
 		using FShape = TShape<SizePoint>;
 
-		auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
-		Item.Type = FShape::EType::Boundaries;
-		Item.Boundaries[0].Operation = Operation;
+		//auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
 		Item.Points.Reserve(K, True);
 	}
 
@@ -59,9 +57,7 @@ namespace ProbeMovementOptimizer
 	{
 		using FShape = TShape<SizePoint>;
 
-		auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
-		Item.Type = FShape::EType::Boundaries;
-		Item.Boundaries[0].Operation = Operation;
+		//auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
 		Item.Points.Reserve(K, True);
 	}
 
@@ -70,9 +66,7 @@ namespace ProbeMovementOptimizer
 	{
 		using FShape = TShape<SizePoint>;
 
-		auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
-		Item.Type = FShape::EType::Boundaries;
-		Item.Boundaries[0].Operation = Operation;
+		//auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
 		Item.Points.Reserve(K, True);
 	}
 
@@ -81,9 +75,7 @@ namespace ProbeMovementOptimizer
 	{
 		using FShape = TShape<SizePoint>;
 
-		auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
-		Item.Type = FShape::EType::Boundaries;
-		Item.Boundaries[0].Operation = Operation;
+		//auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
 		Item.Points.Reserve(K, True);
 	}
 

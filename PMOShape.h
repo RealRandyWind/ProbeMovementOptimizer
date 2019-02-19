@@ -13,15 +13,6 @@ namespace ProbeMovementOptimizer
 	template<FSize SizePoint>
 	struct TShape
 	{
-		enum class EType
-		{
-			_Unknown = Unknown,
-			Boundaries,
-			Simplices,
-			Facets,
-			_Size
-		};
-
 		using FPoint = TPoint<SizePoint, FReal>;
 
 		using FPath = TSequence<FPoint>;
@@ -45,21 +36,10 @@ namespace ProbeMovementOptimizer
 			TSequence<FSize> Indices;
 		};
 
-		EType Type;
-		union
-		{
-			TSequence<FBoundary> Boundaries;
-			TSequence<FSimplex> Simplices;
-			TSequence<FFacet> Facets;
-		};
+		TSequence<FBoundary> Boundaries;
+		TSequence<FSimplex> Simplices;
+		TSequence<FFacet> Facets;
 		TSequence<FPoint> Points;
-
-		TShape()
-		{
-			Type = EType::_Unknown;
-		}
-
-		~TShape() { }
 
 		virtual FVoid Bounds(FPoint &Lower, FPoint &Upper, FBoolean bInitialize = True) const
 		{
@@ -76,10 +56,15 @@ namespace ProbeMovementOptimizer
 			}
 		};
 
+		virtual FVoid Bounds(FPoint (&Range)[2], FBoolean bInitialize = True) const
+		{
+			Bounds(Range[0], Range[1], bInitialize);
+		};
+
 		virtual FVoid Mean(FPoint &Center, FBoolean bInitialize = True, FSize K = 0) const
 		{
 			if (bInitialize) { Center = 0; }
-			else { Center *= (1.0 / K); }
+			else { Center *= (typename FPoint::FValue) K; }
 
 			for (auto &Point : Points)
 			{
