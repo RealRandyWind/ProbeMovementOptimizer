@@ -1,9 +1,10 @@
 #include "pch.h"
 
-#include "PMOMovement2D.h"
 #include "NDevPoint.h"
 #include "NDevMathPoint.h"
 #include "NDevMathExtend.h"
+#include "PMOMovement2D.h"
+#include "PMODefinitions.h"
 
 using namespace ProbeMovementOptimizer;
 
@@ -113,6 +114,7 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 			 */
 			if (!bContained)
 			{
+				
 				_Intersections(Previous, Cursor, Center, Samples);
 			}
 			bPrevious = bCursor;
@@ -138,39 +140,19 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 
 FVoid FMovement2D::_Intersections(const FShape::FPoint &P3, const FShape::FPoint &P4, const FShape::FPoint &Center, _FSample (&Samples)[4])
 {
-	const FReal Eps = TLimit<FReal>::Epsilon();
 	FSize Index, End, Pivot;
-	FBoolean bIntersect;
-	FShape::FPoint Point, D34, D13, D12, D21, C;
-	FReal Alpha;
+	FBoolean bIntersect, bParallel;
+	FShape::FPoint Point;
 
-	D34 = P3 - P4;
 	End = 4;
 	Pivot = End - 1;
 	for (Index = 0; Index < End; ++Index)
 	{
 		auto &Sample = Samples[Index];
-		const auto &P1 = State.Probe[Pivot] + Center;
-		const auto &P2 = State.Probe[Index] + Center;
+		const auto P1 = State.Probe[Pivot] + Center;
+		const auto P2 = State.Probe[Index] + Center;
 
-		D13 = P1 - P3;
-		D12 = P1 - P2;
-		D21 = P2 - P1;
-
-		// Alpha = Det(D12 D34)
-		Alpha = D12[0] * D34[1] - D12[1] * D34[0];
-		if (IsZeroEps(Alpha, Eps))
-		{
-			// paralel lines TODO two cases, on paralel non overlap return
-			// on overlap
-		}
-		// C = { Det(D13 D34), Det(D12 D13) } * (1.0 / Alpha)
-		C[0] = (D13[0] * D34[1] - D13[1] * D34[0]) * (1.0 / Alpha);
-		C[1] = -(D12[0] * D13[1] - D12[1] * D13[0]) * (1.0 / Alpha);
-
-		Point = P1 + C * D21;
-
-		bIntersect = All(Between(C, 0.0, 1.0));
+		bIntersect = Intersect(P1, P2, P3, P4, Point, bParallel, False);
 		if (bIntersect)
 		{
 			Sample.bIntersect = True;

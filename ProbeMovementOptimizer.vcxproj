@@ -201,6 +201,7 @@ PowerShell.exe -Command Copy-Item $(ProjectDir)dep\*.dll $(OutDir) -Force -Exclu
   <ItemGroup>
     <ClInclude Include="PMOAlgorithm.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PMODefinitions.h" />
     <ClInclude Include="PMOKDTree.h" />
     <ClInclude Include="PMOMovement.h" />
     <ClInclude Include="PMOMovement2D.h" />
