@@ -145,11 +145,12 @@ namespace PMOTests
 
 		TEST_METHOD(TestIntersect)
 		{
-			TPoint<2, FReal> P;
+			const FSize K = 2;
+			TPoint<K, FReal> P = { 1.0, 1.0 };
 			FBoolean bParallel, bIntersect;
 
 			{ // parallel no overlap test
-				const TPoint<2, FReal> P1 = { 1.0, 0.0 }, P2 = { 1.0, 1.0 }, P3 = { 0.5, -0.5 }, P4 = { 0.5, 0.5 };
+				const TPoint<K, FReal> P1 = { 1.0, 0.0 }, P2 = { 1.0, 1.0 }, P3 = { 0.5, -0.5 }, P4 = { 0.5, 0.5 };
 				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel);
 				Assert::IsTrue(bParallel, NullPtr, LINE_INFO());
 				Assert::IsFalse(bIntersect, NullPtr, LINE_INFO());
@@ -158,7 +159,7 @@ namespace PMOTests
 			}
 
 			{ // parallel overlap test
-				const TPoint<2, FReal> P1 = { 0.5, 0.0 }, P2 = { 0.5, 1.0 }, P3 = { 0.5, -0.5 }, P4 = { 0.5, 0.5 };
+				const TPoint<K, FReal> P1 = { 0.5, 0.0 }, P2 = { 0.5, 1.0 }, P3 = { 0.5, -0.5 }, P4 = { 0.5, 0.5 };
 				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel);
 				Assert::IsTrue(bParallel, NullPtr, LINE_INFO());
 				Assert::IsTrue(bIntersect, NullPtr, LINE_INFO());
@@ -166,34 +167,44 @@ namespace PMOTests
 				Assert::IsTrue(bIntersect, NullPtr, LINE_INFO());
 			}
 
-			{ // intersect 90
-				const TPoint<2, FReal> P1 = { 0.0, -0.5 }, P2 = { 0.0, 0.5 }, P3 = { -0.5, 0.0 }, P4 = { 0.5, 0.0 };
+			{ // intersect 90, 0.0
+				const TPoint<K, FReal> P1 = { 0.0, -0.5 }, P2 = { 0.0, 0.5 }, P3 = { -0.5, 0.0 }, P4 = { 0.5, 0.0 };
 				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel);
 				Assert::IsFalse(bParallel, NullPtr, LINE_INFO());
 				Assert::IsTrue(bIntersect, NullPtr, LINE_INFO());
 				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel, False);
 				Assert::IsTrue(bIntersect, NullPtr, LINE_INFO());
+				Assert::IsTrue(Equal({ 0.0, 0.0 }, P));
 			}
 
-			{ // intersect 45
-				const TPoint<2, FReal> P1 = { -0.5, 0.5 }, P2 = { 0.5, -0.5 }, P3 = { -0.5, 0.0 }, P4 = { 0.5, 0.0 };
+			{ // intersect 90, 0.5
+				const TPoint<K, FReal> P1 = { 0.5, -1.0 }, P2 = { 0.5, 1.0 }, P3 = { -1.0, 0.5 }, P4 = { 1.0, 0.5 };
 				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel);
 				Assert::IsFalse(bParallel, NullPtr, LINE_INFO());
 				Assert::IsTrue(bIntersect, NullPtr, LINE_INFO());
 				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel, False);
 				Assert::IsTrue(bIntersect, NullPtr, LINE_INFO());
+				Assert::IsTrue(Equal({ 0.5, 0.5 }, P));
+			}
 
+			{ // intersect 45, 0.0
+				const TPoint<K, FReal> P1 = { -0.5, 0.5 }, P2 = { 0.5, -0.5 }, P3 = { -0.5, 0.0 }, P4 = { 0.5, 0.0 };
+				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel);
+				Assert::IsFalse(bParallel, NullPtr, LINE_INFO());
+				Assert::IsTrue(bIntersect, NullPtr, LINE_INFO());
+				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel, False);
+				Assert::IsTrue(bIntersect, NullPtr, LINE_INFO());
+				Assert::IsTrue(Equal({ 0.0, 0.0 }, P));
 			}
 
 			{ // no intersect
-				const TPoint<2, FReal> P1 = { 0.0, -1.0 }, P2 = { 0.0, 1.0 }, P3 = { -0.5, 0.0 }, P4 = { 0.5, 0.0 };
+				const TPoint<K, FReal> P1 = { 0.0, 0.0 }, P2 = { 0.0, -1.0 }, P3 = { -0.5, 0.5 }, P4 = { 0.5, 0.5 };
 				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel);
 				Assert::IsFalse(bParallel, NullPtr, LINE_INFO());
 				Assert::IsFalse(bIntersect, NullPtr, LINE_INFO());
 				bIntersect = Intersect(P1, P2, P3, P4, P, bParallel, False);
 				Assert::IsFalse(bIntersect, NullPtr, LINE_INFO());
 			}
-
 
 		}
 

@@ -19,7 +19,7 @@ namespace PMOTests
 	{
 	public:
 		
-		TEST_METHOD(TestBase)
+		TEST_METHOD(TestMovement2D)
 		{
 			FShape2D Shape;
 			FShape2D::FPath Path;

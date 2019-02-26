@@ -21,9 +21,11 @@ namespace ProbeMovementOptimizer
 
 		using FSimplex = TPoint<SizePoint + 1, FSize>;
 
+		using FMonotone = TSequence<FSize>;
+
 		struct FBoundary
 		{
-			enum class EOperation
+			enum class EOperation : FEnum
 			{
 				_Unknown = Unknown,
 				Inclusion,
@@ -37,6 +39,7 @@ namespace ProbeMovementOptimizer
 		};
 
 		TSequence<FBoundary> Boundaries;
+		TSequence<FMonotone> Monotones;
 		TSequence<FSimplex> Simplices;
 		TSequence<FFacet> Facets;
 		TSequence<FPoint> Points;
@@ -73,6 +76,9 @@ namespace ProbeMovementOptimizer
 			Center *= (1.0 / (K + Points.Size()));
 		};
 
+		virtual FVoid Monotize() { }
+
+		virtual FVoid Simplify() { }
 
 	};
 

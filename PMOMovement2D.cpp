@@ -114,14 +114,13 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 			 */
 			if (!bContained)
 			{
-				
 				_Intersections(Previous, Cursor, Center, Samples);
 			}
 			bPrevious = bCursor;
 			Previous = Cursor;
 		}
 	}
-
+	
 	End = 4;
 	for (Index = 0; Index < End; ++Index)
 	{
@@ -142,7 +141,7 @@ FVoid FMovement2D::_Intersections(const FShape::FPoint &P3, const FShape::FPoint
 {
 	FSize Index, End, Pivot;
 	FBoolean bIntersect, bParallel;
-	FShape::FPoint Point;
+	FShape::FPoint P;
 
 	End = 4;
 	Pivot = End - 1;
@@ -152,12 +151,12 @@ FVoid FMovement2D::_Intersections(const FShape::FPoint &P3, const FShape::FPoint
 		const auto P1 = State.Probe[Pivot] + Center;
 		const auto P2 = State.Probe[Index] + Center;
 
-		bIntersect = Intersect(P1, P2, P3, P4, Point, bParallel, False);
+		bIntersect = Intersect(P1, P2, P3, P4, P, bParallel, False);
 		if (bIntersect)
 		{
 			Sample.bIntersect = True;
-			MinInto(Sample.Lower, Point);
-			MaxInto(Sample.Upper, Point);
+			MinInto(Sample.Lower, P);
+			MaxInto(Sample.Upper, P);
 		}
 		Pivot = Index;
 	}

@@ -10,7 +10,7 @@ namespace ProbeMovementOptimizer
 	using namespace NDev;
 	using namespace NDev::Types;
 
-	enum class EGenerate
+	enum class EGenerate : FEnum
 	{
 		_Unknown = Unknown,
 		Arch,
