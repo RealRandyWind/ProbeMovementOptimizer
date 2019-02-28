@@ -37,11 +37,12 @@ FVoid FMovement2D::_Use(const FShape &Shape, FPath &Path)
 
 FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 {
+	const FReal Infinity = TLimit<FReal>::Infinity();
 	TList<FPath::FValue> List;
 	TStack<_FSample> Stack;
 
 	const auto &Point = Shape.Points[0];
-	Stack.Push(_FSample{ List.Make(Point), 0, Point - Parameters.Diameter, Point + Parameters.Diameter, False });
+	Stack.Push(_FSample{ List.Make(Point), 0, Infinity, -Infinity, False });
 	while (!Stack.Empty())
 	{
 		auto Sample = Stack.Pop();
@@ -68,6 +69,7 @@ FVoid FMovement2D::_Optimize(FPath &Path)
 
 FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FValue> &List, TStack<_FSample> &Stack)
 {
+	const FReal Infinity = TLimit<FReal>::Infinity();
 	_FSample Samples[4];
 	FShape::FPoint Lower, Upper, Cursor, Previous;
 	FReal Radius;
@@ -86,8 +88,8 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 		State.Probe[Index] += Center;
 		auto &_Sample = Samples[Index];
 		_Sample.bIntersect = False;
-		_Sample.Lower = TLimit<FReal>::Infinity();
-		_Sample.Upper = -TLimit<FReal>::Infinity();
+		_Sample.Lower = Infinity;
+		_Sample.Upper = -Infinity;
 		_Sample.Edge = (Sample.Edge + Index) % End;
 	}
 

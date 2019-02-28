@@ -21,9 +21,6 @@
     <ClInclude Include="PMOShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PMOAlgorithm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PMOMovement2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>

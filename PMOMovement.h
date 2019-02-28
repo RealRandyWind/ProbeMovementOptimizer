@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PMOAlgorithm.h"
+#include "NDevAlgorithm.h"
 #include "PMOShape.h"
 
 namespace ProbeMovementOptimizer
@@ -15,7 +15,7 @@ namespace ProbeMovementOptimizer
 
 		using FShape = typename FAlgorithm::FInput;
 
-		using FPath = typename FAlgorithm::FResult;
+		using FPath = typename FAlgorithm::FOutput;
 
 		struct FParameters
 		{

@@ -199,7 +199,6 @@ PowerShell.exe -Command Copy-Item $(ProjectDir)dep\*.dll $(OutDir) -Force -Exclu
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="PMOAlgorithm.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PMODefinitions.h" />
     <ClInclude Include="PMOKDTree.h" />

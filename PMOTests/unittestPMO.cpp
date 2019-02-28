@@ -5,7 +5,6 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 #include "NDev.h"
 #include "PMOShape.h"
-#include "PMOAlgorithm.h"
 #include "PMOKDTree.h"
 #include "PMODefinitions.h"
 
@@ -136,11 +135,6 @@ namespace PMOTests
 			}
 			
 			
-		}
-
-		TEST_METHOD(TestAlgorithm)
-		{
-			// TODO: Your test code here
 		}
 
 		TEST_METHOD(TestIntersect)

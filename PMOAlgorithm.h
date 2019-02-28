@@ -12,14 +12,14 @@ namespace ProbeMovementOptimizer
 	using namespace NDev;
 	using namespace NDev::Types;
 
-	template<typename TypeInput, typename TypeResult>
+	template<typename TypeInput, typename TypeOutput>
 	struct TAlgorithm : public FResource
 	{
 		using FInput = TypeInput;
 		
-		using FResult = TypeResult;
+		using FOutput = TypeOutput;
 
-		using FOnUse = TFunction<FVoid(const FInput &, const FResult &)>;
+		using FOnUse = TFunction<FVoid(const FInput &, const FOutput &)>;
 
 		FOnUse OnUse;
 		FBoolean _bInitialized;
@@ -53,14 +53,14 @@ namespace ProbeMovementOptimizer
 			return sizeof(FInput);
 		}
 
-		FSize ResultSize()
+		FSize OutputSize()
 		{
-			return sizeof(FResult);
+			return sizeof(FOutput);
 		}
 
-		const FSize ResultSize() const
+		const FSize OutputSize() const
 		{
-			return sizeof(FResult);
+			return sizeof(FOutput);
 		}
 
 		FVoid Initialize()
@@ -70,25 +70,25 @@ namespace ProbeMovementOptimizer
 			_bInitialized = True;
 		}
 
-		FVoid Use(const TData<FInput> &Inputs, TData<FResult> &Results)
+		FVoid Use(const TData<FInput> &Inputs, TData<FOutput> &Outputs)
 		{
 			FSize Index, End;
 
 			if (!_bInitialized) { return; }
 
 			End = Inputs.Size();
-			Results.Reserve(End, True);
+			Outputs.Reserve(End, True);
 			for (Index = 0; Index < End; ++Index)
 			{
-				_Use(Inputs[Index], Results[Index]);
+				_Use(Inputs[Index], Outputs[Index]);
 			}
 		}
 
-		FVoid Use(const FInput &Input, FResult &Result)
+		FVoid Use(const FInput &Input, FOutput &Output)
 		{
 			if (!_bInitialized) { return; }
 
-			_Use(Input, Result);
+			_Use(Input, Output);
 		}
 
 		virtual FVoid UseDefaultParameters() { };
@@ -96,7 +96,7 @@ namespace ProbeMovementOptimizer
 	protected:
 		virtual FVoid _Initialize() { };
 
-		virtual FVoid _Use(const FInput &, FResult &) = 0;
+		virtual FVoid _Use(const FInput &, FOutput &) = 0;
 
 
 	};
