@@ -25,8 +25,7 @@ namespace PMOTests
 			FShape2D::FPath Path;
 
 			Shape.Points.Reserve(4, True);
-			Shape.Boundaries.Reserve(1, True);
-			Shape.Boundaries[0] = Shape.Boundaries.Element();
+			Shape.Boundaries.Reserve(1, True, True);
 			Shape.Boundaries[0].Indices.Reserve(4, True);
 			Shape.Points[0] = { 1.0, 0.0 };
 			Shape.Points[1] = { 1.0, 1.0 };

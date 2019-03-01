@@ -123,10 +123,9 @@ namespace PMOTests
 				{
 					Assert::AreEqual(Two, Value, NullPtr, LINE_INFO());
 				}
-				Shape.Boundaries.Reserve(HKD, True);
+				Shape.Boundaries.Reserve(HKD, True, True);
 				for (auto &Boundary : Shape.Boundaries)
 				{
-					Boundary = Shape.Boundaries.Element();
 					Boundary.Operation = FShape::FBoundary::EOperation::Inclusion;
 					Boundary.Indices.Reserve(HKD, True);
 					End = HKD;

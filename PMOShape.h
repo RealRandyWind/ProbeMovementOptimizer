@@ -29,6 +29,8 @@ namespace ProbeMovementOptimizer
 				Inclusion,
 				Exclusion,
 				Intersection,
+				Differentiation,
+				Complementation,
 				_Size
 			};
 
