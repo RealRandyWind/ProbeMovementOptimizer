@@ -17,6 +17,7 @@ namespace ProbeMovementOptimizer
 		Array,
 		Square,
 		Spiral,
+		Fractal,
 		_Size
 	};
 
@@ -29,6 +30,7 @@ namespace ProbeMovementOptimizer
 			case EGenerate::Array: { _GenerateArray(Item, K, Scale, bInverted, Seed); } break;
 			case EGenerate::Square: { _GenerateSquare(Item, K, Scale, bInverted, Seed); } break;
 			case EGenerate::Spiral: { _GenerateSpiral(Item, K, Scale, bInverted, Seed); } break;
+			case EGenerate::Fractal: { _GenerateFractal(Item, K, Scale, bInverted, Seed); } break;
 			default: break;
 		}
 	}
@@ -72,6 +74,15 @@ namespace ProbeMovementOptimizer
 
 	template<FSize SizePoint>
 	FVoid _GenerateSpiral(TShape<SizePoint> &Item, FSize K, FReal Scale, FBoolean bInverted, FSize Seed)
+	{
+		using FShape = TShape<SizePoint>;
+
+		//auto Operation = bInverted ? FShape::FBoundary::EOperation::Exclusion : FShape::FBoundary::EOperation::Inclusion;
+		Item.Points.Reserve(K, True);
+	}
+
+	template<FSize SizePoint>
+	FVoid _GenerateFractal(TShape<SizePoint> &Item, FSize K, FReal Scale, FBoolean bInverted, FSize Seed)
 	{
 		using FShape = TShape<SizePoint>;
 

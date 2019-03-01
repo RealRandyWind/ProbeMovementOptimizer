@@ -22,9 +22,8 @@ namespace ProbeMovementOptimizer
 		 */
 		struct _FSample
 		{
-			FSize Index, Edge;
+			FSize Index, Edge, Intersect;
 			FShape::FPoint Lower, Upper;
-			FBoolean bIntersect;
 		};
 
 		virtual FVoid _Initialize() override;

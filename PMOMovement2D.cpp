@@ -37,12 +37,12 @@ FVoid FMovement2D::_Use(const FShape &Shape, FPath &Path)
 
 FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 {
-	const FReal Infinity = TLimit<FReal>::Infinity();
+	const FReal Radius = Parameters.Diameter * 0.5;
 	TList<FPath::FValue> List;
 	TStack<_FSample> Stack;
 
 	const auto &Point = Shape.Points[0];
-	Stack.Push(_FSample{ List.Make(Point), 0, Infinity, -Infinity, False });
+	Stack.Push(_FSample{ List.Make(Point), 0, 0, Point + Radius, Point - Radius });
 	while (!Stack.Empty())
 	{
 		auto Sample = Stack.Pop();
@@ -71,23 +71,21 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 {
 	const FReal Infinity = TLimit<FReal>::Infinity();
 	_FSample Samples[4];
-	FShape::FPoint Lower, Upper, Cursor, Previous;
+	FShape::FPoint Lower, Upper, Cursor, From, To;
 	FReal Radius;
 	FSize Index, End;
-	FBoolean bPrevious, bCursor, bContained;
+	FBoolean bFrom, bTo, bContained;
 	
 	auto &Center = List[Sample.Index];
 
-	bPrevious = True;
-	bContained = bCursor = False;
-	Radius = Parameters.Diameter * 0.5;
+	bFrom = True;
+	bContained = bTo = False;
 
 	End = 4;
 	for (Index = 0; Index < End; ++Index)
 	{
-		State.Probe[Index] += Center;
 		auto &_Sample = Samples[Index];
-		_Sample.bIntersect = False;
+		_Sample.Intersect = 0;
 		_Sample.Lower = Infinity;
 		_Sample.Upper = -Infinity;
 		_Sample.Edge = (Sample.Edge + Index) % End;
@@ -99,27 +97,21 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 	 * 
 	 * TODO reduce search space of nearest edges
 	 */
-	for (const auto &Boundary : Shape.Boundaries)
+	for (const auto &Facet : Shape.Facets)
 	{
-		Previous = Shape.Points[Boundary.Indices.Size() - 1];
-		for (const auto &Index : Boundary.Indices)
+		From = Shape.Points[Facet[0]];
+		To = Shape.Points[Facet[1]];
+
+		if (bTo = InBound(To, State.Probe[1], State.Probe[3], False))
 		{
-			Cursor = Shape.Points[Index];
-			if (bCursor = InBound(Cursor, State.Probe[1], State.Probe[3], False))
-			{
-				MinInto(Lower, Cursor);
-				MaxInto(Upper, Cursor);
-			}
-			
-			bContained = bCursor && bPrevious;
-			/* TODO flag isolated edges to reduce search space for later placements
-			 */
-			if (!bContained)
-			{
-				_Intersections(Previous, Cursor, Center, Samples);
-			}
-			bPrevious = bCursor;
-			Previous = Cursor;
+			MinInto(Lower, To);
+			MaxInto(Upper, To);
+		}
+
+		bContained = bFrom && bTo;
+		if (!bContained)
+		{
+			_Intersections(From, To, Center, Samples);
 		}
 	}
 	
@@ -131,7 +123,7 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 		 * TODO add corrections of current sample placement
 		 */
 		auto &_Sample = Samples[Index];
-		if (_Sample.bIntersect)
+		if (_Sample.Intersect)
 		{
 			_Sample.Index = List.Make();
 			Stack.Push(_Sample);
@@ -156,7 +148,7 @@ FVoid FMovement2D::_Intersections(const FShape::FPoint &P3, const FShape::FPoint
 		bIntersect = Intersect(P1, P2, P3, P4, P, bParallel, False);
 		if (bIntersect)
 		{
-			Sample.bIntersect = True;
+			++Sample.Intersect;
 			MinInto(Sample.Lower, P);
 			MaxInto(Sample.Upper, P);
 		}
