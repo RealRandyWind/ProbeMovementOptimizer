@@ -75,8 +75,6 @@ namespace ProbeMovementOptimizer
 			Center *= (1.0 / (K + Points.Size()));
 		};
 
-		virtual FVoid Monotize() { }
-
 		virtual FVoid Simplify() { }
 
 	};

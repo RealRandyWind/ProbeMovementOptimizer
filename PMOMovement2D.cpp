@@ -27,7 +27,7 @@ FVoid FMovement2D::_Initialize()
 
 FVoid FMovement2D::_Use(const FShape &Shape, FPath &Path)
 {
-	if (Shape.Boundaries.Empty()) { return; }
+	if (Shape.Facets.Empty()) { return; }
 
 	_Coverage(Shape, Path);
 	_Optimize(Path);
@@ -37,15 +37,22 @@ FVoid FMovement2D::_Use(const FShape &Shape, FPath &Path)
 
 FVoid FMovement2D::_Coverage(const FShape &Shape, FPath &Path)
 {
-	const FReal Radius = Parameters.Diameter * 0.5;
+	const FReal Infinity = TLimit<FReal>::Infinity();
 	TList<FPath::FValue> List;
 	TStack<_FSample> Stack;
+	_FSample Sample;
 
 	const auto &Point = Shape.Points[0];
-	Stack.Push(_FSample{ List.Make(Point), 0, 0, Point + Radius, Point - Radius });
+	Sample.Index = List.Make(Point);
+	Sample.Intersect = 0;
+	Sample.Frame[0] = Infinity;
+	Sample.Frame[1] = -Infinity;
+	Sample.Anchor[0] = Sample.Anchor[1] = Point;
+
+	Stack.Push(Sample);
 	while (!Stack.Empty())
 	{
-		auto Sample = Stack.Pop();
+		Sample = Stack.Pop();
 		_Place(Sample, Shape, List, Stack);
 	}
 	Path.Data(List.Descriptor());
@@ -71,48 +78,40 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 {
 	const FReal Infinity = TLimit<FReal>::Infinity();
 	_FSample Samples[4];
-	FShape::FPoint Lower, Upper, Cursor, From, To;
-	FReal Radius;
 	FSize Index, End;
-	FBoolean bFrom, bTo, bContained;
+	FBoolean bInBound, bContained, bClockwise;
 	
 	auto &Center = List[Sample.Index];
-
-	bFrom = True;
-	bContained = bTo = False;
 
 	End = 4;
 	for (Index = 0; Index < End; ++Index)
 	{
 		auto &_Sample = Samples[Index];
 		_Sample.Intersect = 0;
-		_Sample.Lower = Infinity;
-		_Sample.Upper = -Infinity;
-		_Sample.Edge = (Sample.Edge + Index) % End;
+		_Sample.Anchor[0] = _Sample.Frame[0] = Infinity;
+		_Sample.Anchor[1] = _Sample.Frame[1] = -Infinity;
 	}
+
+	const auto Lower = State.Probe[1] + Center;
+	const auto Upper = State.Probe[3] + Center;
 
 	/* find intersections (cliping with probe as clip plane) and find inbound points to
 	 * determine lower and upper bounds, trace ancker points remember clockwize priority
 	 * for sampling by pusing on the stack.
 	 * 
-	 * TODO reduce search space of nearest edges
+	 * TODO reduce search space of nearest facet
 	 */
 	for (const auto &Facet : Shape.Facets)
 	{
-		From = Shape.Points[Facet[0]];
-		To = Shape.Points[Facet[1]];
-
-		if (bTo = InBound(To, State.Probe[1], State.Probe[3], False))
+		bContained = True;
+		for (const auto &Index : Facet)
 		{
-			MinInto(Lower, To);
-			MaxInto(Upper, To);
+			const auto &P = Shape.Points[Index];
+			bInBound = InBound(P, Lower, Upper, False);
+			if (bInBound) { BoundInto(Sample.Frame, P); }
+			bContained &= bInBound;
 		}
-
-		bContained = bFrom && bTo;
-		if (!bContained)
-		{
-			_Intersections(From, To, Center, Samples);
-		}
+		if (!bContained) { _Intersections(Facet, Center, Samples, Shape); }
 	}
 	
 	End = 4;
@@ -120,7 +119,7 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 	{
 		/* add only samples with intersections (edgecases) to stack 
 		 *
-		 * TODO add corrections of current sample placement
+		 * TODO add corrections of current sample placement before
 		 */
 		auto &_Sample = Samples[Index];
 		if (_Sample.Intersect)
@@ -131,11 +130,14 @@ FVoid FMovement2D::_Place(_FSample &Sample, const FShape &Shape, TList<FPath::FV
 	}
 }
 
-FVoid FMovement2D::_Intersections(const FShape::FPoint &P3, const FShape::FPoint &P4, const FShape::FPoint &Center, _FSample (&Samples)[4])
+FVoid FMovement2D::_Intersections(const FShape::FFacet &Facet, const FShape::FPoint &Center, _FSample (&Samples)[4], const FShape &Shape)
 {
 	FSize Index, End, Pivot;
 	FBoolean bIntersect, bParallel;
 	FShape::FPoint P;
+
+	const auto &P3 = Shape.Points[Facet[0]];
+	const auto &P4 = Shape.Points[Facet[1]];
 
 	End = 4;
 	Pivot = End - 1;
@@ -149,8 +151,7 @@ FVoid FMovement2D::_Intersections(const FShape::FPoint &P3, const FShape::FPoint
 		if (bIntersect)
 		{
 			++Sample.Intersect;
-			MinInto(Sample.Lower, P);
-			MaxInto(Sample.Upper, P);
+			BoundInto(Sample.Anchor, P);
 		}
 		Pivot = Index;
 	}

@@ -24,18 +24,18 @@ namespace PMOTests
 			FShape2D Shape;
 			FShape2D::FPath Path;
 
+			
+
 			Shape.Points.Reserve(4, True);
-			Shape.Boundaries.Reserve(1, True, True);
-			Shape.Boundaries[0].Indices.Reserve(4, True);
-			Shape.Points[0] = { 1.0, 0.0 };
-			Shape.Points[1] = { 1.0, 1.0 };
-			Shape.Points[2] = { 0.0, 1.0 };
-			Shape.Points[3] = { 0.0, 0.0 };
-			Shape.Boundaries[0].Operation = FShape2D::FBoundary::EOperation::Inclusion;
-			Shape.Boundaries[0].Indices[0] = 0;
-			Shape.Boundaries[0].Indices[1] = 1;
-			Shape.Boundaries[0].Indices[2] = 2;
-			Shape.Boundaries[0].Indices[3] = 3;
+			Shape.Points[0] = { 0.5, -0.5 };
+			Shape.Points[1] = { 0.5, 0.5 };
+			Shape.Points[2] = { -0.5, 0.5 };
+			Shape.Points[3] = { -0.5, -0.5 };
+			Shape.Facets.Reserve(4, True);
+			Shape.Facets[0] = { 0, 1 };
+			Shape.Facets[1] = { 1, 2 };
+			Shape.Facets[2] = { 2, 3 };
+			Shape.Facets[3] = { 3, 0 };
 
 			auto Movement2D = FMovement2D();
 			Movement2D.Initialize();
@@ -82,6 +82,15 @@ namespace PMOTests
 			// TODO: Your test code here
 		}
 
+		TEST_METHOD(TestFractal)
+		{
+			// TODO: Your test code here
+		}
+
+		TEST_METHOD(TTestFractalInverted)
+		{
+			// TODO: Your test code here
+		}
 
 	};
 

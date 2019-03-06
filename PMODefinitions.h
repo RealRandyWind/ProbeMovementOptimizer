@@ -26,7 +26,7 @@ namespace ProbeMovementOptimizer
 		{
 			return !bHandleParallel || Any(IsEqualEps(P1, P3, Eps));
 		}
-		/* C = { Det(D13, D34) * (1.0 / Alpha), Det(D12, D13) * (1.0 / Alpha) }; */
+		/* C = { Det(D13, D34), Det(D12, D13) }; C *= (1.0 / Alpha); */
 		C[0] = (D13[0] * D34[1] - D13[1] * D34[0]) * (1.0 / Alpha);
 		C[1] = -(D12[0] * D13[1] - D12[1] * D13[0]) * (1.0 / Alpha);
 		P = P1 + C[0] * D21;
